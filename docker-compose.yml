@@ -1,0 +1,41 @@
+services:
+  app:
+    image: php:8.1-apache
+    container_name: fempower-portal
+    restart: unless-stopped
+    ports:
+      - "8089:80"
+    environment:
+      DB_HOST: db
+      DB_NAME: puav_app
+      DB_USER: puav_user
+      DB_PASSWORD: puav_password
+    volumes:
+      - .:/var/www/html
+    entrypoint: >
+      sh -c "docker-php-ext-install mysqli pdo pdo_mysql &&
+             docker-php-entrypoint apache2-foreground"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mariadb:10.11
+    container_name: fempower-mariadb
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: puav_app
+      MYSQL_USER: puav_user
+      MYSQL_PASSWORD: puav_password
+      MYSQL_ROOT_PASSWORD: root_password
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./BD.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db_data:

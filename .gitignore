@@ -1,0 +1,11 @@
+# Logs & Environment
+*.log
+error_log
+.env
+
+# OS and Editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp

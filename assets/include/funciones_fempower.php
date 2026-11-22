@@ -4,11 +4,11 @@
  * MISE 20200216
  * Funciones que interactúan con BD
  * */
-function conectar() {
-  $servername = "localhost";
-  $username = "appuser";
-  $password = "-,r!UEsi-o2*";
-  $dbname = "puav_produccion";
+function conectar() {
+  $servername = getenv("DB_HOST") ?: "localhost";
+  $username = getenv("DB_USER") ?: "puav_user";
+  $password = getenv("DB_PASSWORD") ?: "puav_password";
+  $dbname = getenv("DB_NAME") ?: "puav_app";
 
   $conn = mysqli_connect($servername, $username, $password, $dbname);
   $conn->set_charset("utf8");

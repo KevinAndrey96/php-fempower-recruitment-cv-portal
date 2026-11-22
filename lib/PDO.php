@@ -1,8 +1,8 @@
 <?php 
-    $dbname = 'puav_produccion';
-    $host = 'localhost';
-    $username= 'appuser';
-    $password = '-,r!UEsi-o2*';
+    $dbname = getenv('DB_NAME') ?: 'puav_app';
+    $host = getenv('DB_HOST') ?: 'localhost';
+    $username = getenv('DB_USER') ?: 'puav_user';
+    $password = getenv('DB_PASSWORD') ?: 'puav_password';
  
     $options = array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8');
     try 
