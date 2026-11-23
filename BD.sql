@@ -1,3 +1,6 @@
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
+
 -- puav_produccion.archivos definition
 
 CREATE TABLE `archivos` (
@@ -392,3 +395,174 @@ CREATE TABLE `oferentes_vacantes` (
   CONSTRAINT `fk_oferentes_vacantes_001` FOREIGN KEY (`id_oferente`) REFERENCES `oferentes_bi` (`id`),
   CONSTRAINT `fk_oferentes_vacantes_002` FOREIGN KEY (`id_vacante`) REFERENCES `demandantes_vacantes` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Tabla que contiene la la relación de las vacantes en las que el PUAV relaciona a los oferentes';
+
+
+-- -----------------------------------------------------
+-- SEED DATA: Roles, Taxonomy Codes, Demo Users & Portfolios
+-- -----------------------------------------------------
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- 1. Roles
+INSERT INTO `roles` (`id`, `nombre`, `descripcion`, `estado`) VALUES
+(1, 'Demandante', 'Empresas y empleadores que publican vacantes laborales', 1),
+(2, 'Administrador', 'Administrador del sistema de reclutamiento', 1),
+(3, 'Oferente', 'Candidatas y personas en búsqueda de oportunidades de empleo', 1)
+ON DUPLICATE KEY UPDATE `nombre` = VALUES(`nombre`);
+
+-- 2. Codigos (Taxonomia y Categorias)
+-- Documentos (id_padre = 18)
+INSERT INTO `codigos` (`id`, `id_padre`, `descripcion`, `orden`, `codigo_oficial`, `estado`) VALUES
+(18, NULL, 'TIPO DE DOCUMENTO', 1, 'DOC', 1),
+(1, 18, 'Cédula de Ciudadanía', 1, 'CC', 1),
+(2, 18, 'NIT', 2, 'NIT', 1),
+(3, 18, 'Cédula de Extranjería', 3, 'CE', 1),
+(4, 18, 'Tarjeta de Identidad', 4, 'TI', 1),
+(5, 18, 'Pasaporte', 5, 'PAS', 1)
+ON DUPLICATE KEY UPDATE `descripcion` = VALUES(`descripcion`);
+
+-- Estados Civiles (id_padre = 2260)
+INSERT INTO `codigos` (`id`, `id_padre`, `descripcion`, `orden`, `codigo_oficial`, `estado`) VALUES
+(2260, NULL, 'ESTADO CIVIL', 2, 'EC', 1),
+(2261, 2260, 'Soltero(a)', 1, 'SOL', 1),
+(2262, 2260, 'Casado(a)', 2, 'CAS', 1),
+(2263, 2260, 'Unión Libre', 3, 'UNL', 1),
+(2264, 2260, 'Divorciado(a)', 4, 'DIV', 1),
+(2265, 2260, 'Viudo(a)', 5, 'VIU', 1)
+ON DUPLICATE KEY UPDATE `descripcion` = VALUES(`descripcion`);
+
+-- Capacitacion y Opciones Si-No (id_padre = 2199)
+INSERT INTO `codigos` (`id`, `id_padre`, `descripcion`, `orden`, `codigo_oficial`, `estado`) VALUES
+(2199, NULL, 'CAPACITACION Y OPCIONES', 3, 'CAP', 1),
+(2200, 2199, 'Sí', 1, 'SI', 1),
+(2201, 2199, 'No', 2, 'NO', 1),
+(2202, 2199, 'Curso Corto / Taller', 3, 'CCOR', 1),
+(2203, 2199, 'Diplomado', 4, 'DIP', 1),
+(2204, 2199, 'Certificación de Competencias Laborales', 5, 'CERT', 1)
+ON DUPLICATE KEY UPDATE `descripcion` = VALUES(`descripcion`);
+
+-- Niveles de Educacion (id_padre = 4504)
+INSERT INTO `codigos` (`id`, `id_padre`, `descripcion`, `orden`, `codigo_oficial`, `estado`) VALUES
+(4504, NULL, 'NIVEL EDUCATIVO', 4, 'EDU', 1),
+(4505, 4504, 'Básica Primaria', 1, 'PRI', 1),
+(4506, 4504, 'Bachillerato / Secundaria', 2, 'SEC', 1),
+(4507, 4504, 'Técnico Laboral', 3, 'TEC', 1),
+(4508, 4504, 'Tecnólogo', 4, 'TECN', 1),
+(4509, 4504, 'Profesional Universitario', 5, 'UNIV', 1),
+(4510, 4504, 'Especialización / Posgrado', 6, 'POS', 1)
+ON DUPLICATE KEY UPDATE `descripcion` = VALUES(`descripcion`);
+
+-- Tipos de Referencia (id_padre = 2219)
+INSERT INTO `codigos` (`id`, `id_padre`, `descripcion`, `orden`, `codigo_oficial`, `estado`) VALUES
+(2219, NULL, 'TIPO DE REFERENCIA', 5, 'REF', 1),
+(2220, 2219, 'Laboral', 1, 'LAB', 1),
+(2221, 2219, 'Personal', 2, 'PER', 1),
+(2222, 2219, 'Familiar', 3, 'FAM', 1)
+ON DUPLICATE KEY UPDATE `descripcion` = VALUES(`descripcion`);
+
+-- Tipos de Contrato (id_padre = 3087)
+INSERT INTO `codigos` (`id`, `id_padre`, `descripcion`, `orden`, `codigo_oficial`, `estado`) VALUES
+(3087, NULL, 'TIPO DE CONTRATO', 6, 'CONTR', 1),
+(3088, 3087, 'Término Fijo', 1, 'FIJO', 1),
+(3089, 3087, 'Término Indefinido', 2, 'INDEF', 1),
+(3090, 3087, 'Obra o Labor', 3, 'OBRA', 1),
+(3091, 3087, 'Prestación de Servicios', 4, 'SERV', 1),
+(3092, 3087, 'Contrato de Aprendizaje', 5, 'APREN', 1)
+ON DUPLICATE KEY UPDATE `descripcion` = VALUES(`descripcion`);
+
+-- Rangos Salariales (id_padre = 4788)
+INSERT INTO `codigos` (`id`, `id_padre`, `descripcion`, `orden`, `codigo_oficial`, `estado`) VALUES
+(4788, NULL, 'RANGO SALARIAL', 7, 'SAL', 1),
+(4789, 4788, 'Menos de 1 SMMLV', 1, 'S1', 1),
+(4790, 4788, '1 a 2 SMMLV', 2, 'S2', 1),
+(4791, 4788, '2 a 4 SMMLV', 3, 'S3', 1),
+(4792, 4788, '4 a 6 SMMLV', 4, 'S4', 1),
+(4793, 4788, 'Más de 6 SMMLV', 5, 'S5', 1)
+ON DUPLICATE KEY UPDATE `descripcion` = VALUES(`descripcion`);
+
+-- Areas de Trabajo / Vacantes (id_padre = 2234)
+INSERT INTO `codigos` (`id`, `id_padre`, `descripcion`, `orden`, `codigo_oficial`, `estado`) VALUES
+(2234, NULL, 'AREA DE TRABAJO', 8, 'AREA', 1),
+(2235, 2234, 'Administración y Operaciones de Oficina', 1, 'ADM', 1),
+(2236, 2234, 'Construcción y Obras Civiles', 2, 'CONS', 1),
+(2237, 2234, 'Mantenimiento e Instalaciones Eléctricas / Sanitarias', 3, 'MANT', 1),
+(2238, 2234, 'Logística, Bodega y Despacho', 4, 'LOG', 1),
+(2239, 2234, 'Servicios Generales, Limpieza y Mantenimiento Físico', 5, 'SG', 1),
+(2240, 2234, 'Ventas, Comercial y Atención al Cliente', 6, 'COM', 1)
+ON DUPLICATE KEY UPDATE `descripcion` = VALUES(`descripcion`);
+
+-- Sectores Economicos CIIU (id_padre = 3884)
+INSERT INTO `codigos` (`id`, `id_padre`, `descripcion`, `orden`, `codigo_oficial`, `estado`) VALUES
+(3884, NULL, 'SECTOR ECONOMICO', 9, 'CIIU', 1),
+(3885, 3884, 'Construcción de Edificaciones y Obras', 1, 'F4100', 1),
+(3886, 3884, 'Cuidado Inmobiliario y Administración de Propiedad', 2, 'L6810', 1),
+(3887, 3884, 'Comercio al por Mayor y al por Menor', 3, 'G4600', 1),
+(3888, 3884, 'Servicios Administrativos y de Apoyo', 4, 'N8110', 1),
+(3889, 3884, 'Industrias Manufactureras', 5, 'C1000', 1),
+(3890, 3884, 'Información y Comunicaciones', 6, 'J6201', 1)
+ON DUPLICATE KEY UPDATE `descripcion` = VALUES(`descripcion`);
+
+-- Ubicaciones Geograficas (DEPARTAMENTO id=100)
+INSERT INTO `codigos` (`id`, `id_padre`, `descripcion`, `orden`, `codigo_oficial`, `estado`) VALUES
+(100, NULL, 'DEPARTAMENTO', 10, 'DEP', 1),
+-- Departamentos (id_padre=100)
+(110, 100, 'BOGOTA D.C.', 1, '11', 1),
+(111, 100, 'ANTIOQUIA', 2, '05', 1),
+(112, 100, 'VALLE DEL CAUCA', 3, '76', 1),
+(113, 100, 'CUNDINAMARCA', 4, '25', 1),
+(114, 100, 'ATLANTICO', 5, '08', 1),
+(115, 100, 'SANTANDER', 6, '68', 1),
+(116, 100, 'BOLIVAR', 7, '13', 1),
+-- Municipios (id_padre=depto)
+(1101, 110, 'BOGOTA, D.C.', 1, '11001', 1),
+(1111, 111, 'MEDELLIN', 1, '05001', 1),
+(1112, 111, 'ENVIGADO', 2, '05266', 1),
+(1113, 111, 'BELLO', 3, '05088', 1),
+(1121, 112, 'CALI', 1, '76001', 1),
+(1122, 112, 'PALMIRA', 2, '76520', 1),
+(1131, 113, 'SOACHA', 1, '25754', 1),
+(1132, 113, 'CHIA', 2, '25175', 1),
+(1141, 114, 'BARRANQUILLA', 1, '08001', 1),
+(1151, 115, 'BUCARAMANGA', 1, '68001', 1),
+(1161, 116, 'CARTAGENA', 1, '13001', 1)
+ON DUPLICATE KEY UPDATE `descripcion` = VALUES(`descripcion`);
+
+-- 3. Usuarios Demo (password: admin123)
+-- Hash: $2y$10$w8VIklR.UjGinLMo0oWwXOeopk6SAjm0fsY3qpeatVgns4Wx5UQDW
+INSERT INTO `usuarios` (`id`, `tipo_doc`, `username`, `password`, `email`, `confirmcode`, `estado`, `tipo_usuario`, `tratamiento_datos`, `fecha_registro`) VALUES
+(1, 2, 'empresa', '$2y$10$w8VIklR.UjGinLMo0oWwXOeopk6SAjm0fsY3qpeatVgns4Wx5UQDW', 'empresa@fempower.local', 'ACTIVO', 1, 1, 1, NOW()),
+(2, 1, 'candidata', '$2y$10$w8VIklR.UjGinLMo0oWwXOeopk6SAjm0fsY3qpeatVgns4Wx5UQDW', 'candidata@fempower.local', 'ACTIVO', 1, 3, 1, NOW()),
+(3, 1, 'admin', '$2y$10$w8VIklR.UjGinLMo0oWwXOeopk6SAjm0fsY3qpeatVgns4Wx5UQDW', 'admin@fempower.local', 'ACTIVO', 1, 2, 1, NOW())
+ON DUPLICATE KEY UPDATE `username` = VALUES(`username`);
+
+-- 4. Perfil Empresa (Demandante)
+INSERT INTO `demandantes_bi` (`id`, `idUsuario`, `razon_social`, `nit`, `representante_legal`, `ciiu`, `telefono`, `celular`, `direccion`, `municipioCodigo`, `url_web`, `check`, `checkDate`, `checkBy`) VALUES
+(1, 1, 'Construcciones y Soluciones Inmobiliarias SAS', 900123456, 'Carlos Mendoza Silva', 3885, '6012345', '3101234567', 'Carrera 7 # 72-10 Oficina 501', 1101, 'https://construcciones-demo.com', 1, NOW(), 'Sistema')
+ON DUPLICATE KEY UPDATE `razon_social` = VALUES(`razon_social`);
+
+-- 5. Vacantes Publicadas
+INSERT INTO `demandantes_vacantes` (`id`, `idDemandante`, `nombreCargo`, `descripcion`, `salario`, `tipoContratoCodigo`, `mpioUbicacionCodigo`, `numeroVacantes`, `funciones`, `experienciaRequerida`, `fechaPublicacion`, `fechaCierre`, `idArchivo`) VALUES
+(1, 1, 'Supervisora de Obra y Acabados Arquitectonicos', 'Supervision y control de calidad en acabados de edificaciones residenciales.', 4791, 3089, 1101, 2, 'Control de calidad, revision de protocolos tecnicos y coordinacion de cuadrillas.', 'Minimo 2 anos en obras civiles.', CURDATE(), DATE_ADD(CURDATE(), INTERVAL 60 DAY), NULL),
+(2, 1, 'Auxiliar de Mantenimiento y Cuadrilla Inmobiliaria', 'Mantenimiento locativo y adecuaciones fisicas de instalaciones corporativas.', 4790, 3090, 1101, 3, 'Reparaciones menores, pintura arquitectonica y apoyo en adecuaciones.', 'Minimo 1 ano en mantenimiento o servicios generales.', CURDATE(), DATE_ADD(CURDATE(), INTERVAL 60 DAY), NULL)
+ON DUPLICATE KEY UPDATE `nombreCargo` = VALUES(`nombreCargo`);
+
+-- 6. Perfil Candidata (Oferente)
+INSERT INTO `oferentes_bi` (`id`, `idUsuario`, `nombre1`, `nombre2`, `apellido1`, `apellido2`, `fechaNacimiento`, `telefono1`, `telefono2`, `municipioNacimientoCodigo`, `generoCodigo`, `sexoCodigo`, `direccion`, `municipioViviendaCodigo`, `estadoCivilCodigo`, `extranjeroCodigo`, `paisCodigo`, `discapacidad`) VALUES
+(1, 2, 'Laura', 'Camila', 'Torres', 'Gomez', '1995-08-14', '3157891234', '6015555', 1101, 1, 1, 'Calle 53 # 14-25 Apto 302', 1101, 2261, 2201, 1, 0)
+ON DUPLICATE KEY UPDATE `nombre1` = VALUES(`nombre1`);
+
+-- 7. Educacion de la Candidata
+INSERT INTO `oferentes_educacion` (`id`, `idOferente`, `capacitacionTrabajo`, `formal`, `titulo`, `institucion`, `presencialVirtual`, `anoFinalizacion`, `mesFinalizacion`, `termino`, `mesesEstudio`, `idArchivo`) VALUES
+(1, 1, 2200, 2200, 'Tecnologa en Construccion y Gestion de Obras', 'SENA Centro de Tecnologias de la Construccion', 'P', 2018, 12, 2200, 24, NULL)
+ON DUPLICATE KEY UPDATE `titulo` = VALUES(`titulo`);
+
+-- 8. Experiencia Laboral de la Candidata
+INSERT INTO `oferentes_experiencia` (`id`, `idOferente`, `empresa`, `telefono`, `municipio`, `pasantia`, `fechaIngreso`, `empleoActual`, `fechaSalida`, `ocupacion`, `cargo`, `logros`, `idArchivo`) VALUES
+(1, 1, 'Constructora Bolivar', '6013334444', 1101, 2201, '2019-02-01', 2201, '2023-11-30', NULL, 'Auxiliar de Control de Obra', 'Supervision tecnica de acabados, entrega a satisfaccion de 84 apartamentos.', NULL)
+ON DUPLICATE KEY UPDATE `empresa` = VALUES(`empresa`);
+
+-- 9. Referencias de la Candidata
+INSERT INTO `oferentes_referencias` (`id`, `idOferente`, `nombre`, `tipoReferencia`, `telefono`, `celular`, `direccion`, `ocupacion`, `idArchivo`) VALUES
+(1, 1, 'Ing. Andres Felipe Morales', 2220, '6013334444', '3119876543', 'Calle 100 # 15-20', 'Director de Proyecto en Constructora Bolivar', NULL)
+ON DUPLICATE KEY UPDATE `nombre` = VALUES(`nombre`);
+
+SET FOREIGN_KEY_CHECKS = 1;

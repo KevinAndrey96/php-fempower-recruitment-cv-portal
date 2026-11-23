@@ -7,7 +7,7 @@ class DAO_log_in {
 
   private $con;
 
-  public function DAO_log_in() {
+  public function __construct() {
 
   }
 
@@ -25,26 +25,32 @@ class DAO_log_in {
   }
 
   public function getLog_inById($id) {
-    $sql = "SELECT * FROM log_in WHERE id = " . $id;
+    $sql = "SELECT * FROM log_in WHERE id = " . (int)$id;
     $this->conectar();
     $result = $this->con->query($sql);
     $this->desconectar();
-    while ($row = mysql_fetch_array($query)) {
+    $rpta = null;
+    while ($row = mysqli_fetch_array($result)) {
       $rpta = $row;
     }
-    $result->close();
+    if ($result) {
+      $result->close();
+    }
     return $rpta;
   }
 
   public function getLastLog_inByUsername($username) {
-    $sql = "SELECT TOP 1 * FROM log_in WHERE username = '" . $username . "' ORDER BY date_login DESC";
+    $sql = "SELECT * FROM log_in WHERE username = '" . $this->con->real_escape_string($username) . "' ORDER BY date_login DESC LIMIT 1";
     $this->conectar();
     $result = $this->con->query($sql);
     $this->desconectar();
-    while ($row = mysql_fetch_array($result)) {
+    $rpta = null;
+    while ($row = mysqli_fetch_array($result)) {
       $rpta = $row;
     }
-    $result->close();
+    if ($result) {
+      $result->close();
+    }
     return $rpta;
   }
 

@@ -1,4 +1,4 @@
-# Turnkey Employability & Recruitment Web Portal Template
+# Turnkey Employability & Recruitment Web Portal Template (php-fempower-recruitment-cv-portal)
 
 [![PHP](https://img.shields.io/badge/PHP-8.1%20%7C%208.2-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://www.php.net)
 [![MariaDB](https://img.shields.io/badge/MariaDB-10.11-003545?style=for-the-badge&logo=mariadb&logoColor=white)](https://mariadb.org)
@@ -20,8 +20,8 @@ A complete, production-proven turnkey recruitment and employability portal templ
 - **Employer Vacancy & Recruitment Board**:
   - Vacancy creation engine with salary ranges, requirements, and job locations (`AddVac.php`, `rVacante.php`).
   - Applicant review stream and status evaluation (`eVacante.php`, `EditVac.php`).
-- **Dual Connection Resolver**: Object-oriented PDO abstraction layer (`lib/PDO.php`) combined with legacy procedural helpers (`assets/include/funciones_fempower.php`), fully bound to environment variables.
-- **Turnkey Database Seed**: Complete relational database schema (`BD.sql`) pre-loaded with lookup tables, catalogs, and initial role configurations.
+- **Dual Connection Resolver**: Object-oriented PDO abstraction layer (`lib/PDO.php`) combined with legacy DAO helpers (`assets/include/DAO_usuarios.php`, `credenciales.php`), fully bound to environment variables.
+- **Turnkey Database Seed**: Complete relational database schema (`BD.sql`) pre-loaded with lookup tables, catalogs, initial role configurations, and pre-seeded demo accounts.
 
 ---
 
@@ -31,20 +31,22 @@ A complete, production-proven turnkey recruitment and employability portal templ
 +-------------------------------------------------------------+
 |                     Client Browser                          |
 +-------------------------------------------------------------+
-                              | HTTP (Port 8089)
-                              v
-+-------------------------------------------------------------+
-|                 Apache Web Server (PHP 8.1)                 |
-|  - Candidate Resume & Experience Hub (AddEdu, AddExp)       |
-|  - Recruiter Vacancy Board (AddVac, eVacante)               |
-|  - Data Access Layer (lib/PDO.php & funciones_fempower.php) |
-+-------------------------------------------------------------+
-                              | TCP / MySQL protocol
-                              v
+              | HTTP (Port 8090)           | HTTP (Port 8091)
+              v                            v
++-----------------------------+   +---------------------------+
+| Apache Web Server (PHP 8.1) |   |        phpMyAdmin         |
+| - Resume & CV Builders      |   |   (Web Database Manager)  |
+| - Vacancy Board & Matching  |   +---------------------------+
+| - DAO Layer (PDO & MySQLi)  |                |
++-----------------------------+                |
+              | TCP (Port 3306)                |
+              +-----------------+--------------+
+                                |
+                                v
 +-------------------------------------------------------------+
 |              Database Service (MariaDB 10.11)               |
-|  - Schema: puav_app                                         |
-|  - Auto-initialization from BD.sql on container startup     |
+| - Schema: puav_app                                          |
+| - Auto-seeded tables: usuarios, vacantes, codigos, oferentes|
 +-------------------------------------------------------------+
 ```
 
@@ -56,19 +58,28 @@ Run the employability portal locally in seconds:
 
 ### 1. Clone the Repository
 ```bash
-git clone git@github.com-personal:KevinAndrey96/puav-fempower.git
-cd puav-fempower
+git clone git@github.com-personal:KevinAndrey96/php-fempower-recruitment-cv-portal.git
+cd php-fempower-recruitment-cv-portal
 ```
 
-### 2. Launch the Stack
+### 2. Configure Environment (Optional)
+```bash
+cp .env.example .env
+```
+
+### 3. Launch the Stack
 ```bash
 docker compose up -d
 ```
 
-### 3. Access the Application
-- **Portal URL**: [http://localhost:8089](http://localhost:8089)
-- **Registration**: [http://localhost:8089/registro.php](http://localhost:8089/registro.php)
-- **Login**: [http://localhost:8089/index.php](http://localhost:8089/index.php)
+### 4. Access the Application
+| Service | URL | Default Credentials | Description |
+| :--- | :--- | :--- | :--- |
+| **Portal Principal** | [http://localhost:8090](http://localhost:8090) | N/A | Acceso al portal y login |
+| **Cuenta Empresa (Demandante)** | [http://localhost:8090/index.php](http://localhost:8090/index.php) | `empresa` / `admin123` (Seleccionar: Empresa) | Publicación y gestión de vacantes |
+| **Cuenta Candidata (Oferente)** | [http://localhost:8090/index.php](http://localhost:8090/index.php) | `candidata` / `admin123` (Seleccionar: Persona) | Hoja de vida, experiencia y estudios |
+| **Cuenta Administrador** | [http://localhost:8090/index.php](http://localhost:8090/index.php) | `admin` / `admin123` | Supervisión general del sistema |
+| **phpMyAdmin** | [http://localhost:8091](http://localhost:8091) | User: `puav_user` / `puav_password` | Gestor de base de datos web |
 
 ---
 
@@ -77,7 +88,7 @@ docker compose up -d
 1. Upload all repository files to your server web root (`public_html/` or `/var/www/html/`).
 2. Create a MySQL database and user in your control panel.
 3. Import the included database backup `BD.sql`.
-4. Configure database settings in `lib/PDO.php` and `assets/include/funciones_fempower.php` or export environment variables:
+4. Configure database settings in `lib/PDO.php`, `assets/include/credenciales.php`, and `assets/include/funciones_fempower.php` or export environment variables:
    ```ini
    DB_HOST="localhost"
    DB_NAME="puav_app"

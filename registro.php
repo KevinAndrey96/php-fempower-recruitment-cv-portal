@@ -41,7 +41,8 @@ if (isset($_REQUEST["btnRegistrar"])) {
       $headers = "MIME-Version: 1.0" . "\r\n";
       $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
       $headers .= 'From: SOPORTE (F)EMPOWER <soporte@fempower.com.co>' . "\r\n";
-      $headers .= 'Bcc: soporte@fempower.com.co, msancheze@outlook.com' . "\r\n";
+      $admin_email = getenv('ADMIN_EMAIL') ?: 'soporte@fempower.local';
+      $headers .= 'Bcc: ' . $admin_email . "\r\n";
       mail($to_email, $subject, $message, $headers);
       header('Location: registro.php?accion=1');
     } else {

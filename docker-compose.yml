@@ -1,15 +1,15 @@
 services:
   app:
     image: php:8.1-apache
-    container_name: fempower-portal
+    container_name: fempower-recruitment-app
     restart: unless-stopped
     ports:
-      - "8089:80"
+      - "${APP_PORT:-8090}:80"
     environment:
       DB_HOST: db
-      DB_NAME: puav_app
-      DB_USER: puav_user
-      DB_PASSWORD: puav_password
+      DB_NAME: ${DB_NAME:-puav_app}
+      DB_USER: ${DB_USER:-puav_user}
+      DB_PASSWORD: ${DB_PASSWORD:-puav_password}
     volumes:
       - .:/var/www/html
     entrypoint: >
@@ -21,13 +21,15 @@ services:
 
   db:
     image: mariadb:10.11
-    container_name: fempower-mariadb
+    container_name: fempower-recruitment-db
     restart: unless-stopped
     environment:
-      MYSQL_DATABASE: puav_app
-      MYSQL_USER: puav_user
-      MYSQL_PASSWORD: puav_password
-      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: ${DB_NAME:-puav_app}
+      MYSQL_USER: ${DB_USER:-puav_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-puav_password}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root_password}
+    ports:
+      - "${DB_PORT:-3310}:3306"
     volumes:
       - db_data:/var/lib/mysql
       - ./BD.sql:/docker-entrypoint-initdb.d/init.sql:ro
@@ -36,6 +38,18 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: fempower-recruitment-pma
+    restart: unless-stopped
+    ports:
+      - "${PMA_PORT:-8091}:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+    depends_on:
+      - db
 
 volumes:
   db_data:

@@ -1,6 +1,6 @@
 <?php
 session_start();
-if($_SESSION["Active"]==true)
+if (!empty($_SESSION["Active"]))
 {
   ?>
   <script type="text/javascript">
@@ -9,11 +9,11 @@ if($_SESSION["Active"]==true)
   <?php
 }
 include_once 'assets/include/funciones_fempower.php';
-$tipo = (isset($_POST['Enviar'])) ? $_POST['Enviar'] : $_GET['TipoUsuario'];
+$tipo = isset($_POST['Enviar']) ? $_POST['Enviar'] : (isset($_GET['TipoUsuario']) ? $_GET['TipoUsuario'] : '');
 $exito = "";
 $error = "";
 
-if ($_REQUEST['termina'] == 'Ingresar') {
+if (isset($_REQUEST['termina']) && $_REQUEST['termina'] == 'Ingresar') {
   include 'assets/include/DAO_usuarios.php';
   include 'assets/include/DAO_log_in.php';
 

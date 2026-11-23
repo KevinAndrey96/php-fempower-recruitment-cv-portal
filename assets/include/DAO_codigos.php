@@ -7,7 +7,7 @@ class DAO_codigos {
 
   private $con;
 
-  public function DAO_codigos() {
+  public function __construct() {
 
   }
 
